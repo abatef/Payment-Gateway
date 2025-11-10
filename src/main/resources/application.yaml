@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: Payment Gateway
+
+  profiles:
+    active: dev
