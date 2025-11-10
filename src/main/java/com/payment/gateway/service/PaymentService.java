@@ -2,6 +2,7 @@ package com.payment.gateway.service;
 
 import com.payment.gateway.dto.PaymentInitiateRequest;
 import com.payment.gateway.dto.PaymentTransactionResponse;
+import com.payment.gateway.exception.CrossTenantAccessException;
 import com.payment.gateway.exception.ForbiddenException;
 import com.payment.gateway.exception.ResourceNotFoundException;
 import com.payment.gateway.model.PaymentTransaction;
@@ -37,7 +38,7 @@ public class PaymentService {
               .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
       if (!existingTransaction.getTenantId().equals(tenantId)) {
-        throw new ForbiddenException("Access denied to this transaction");
+        throw new CrossTenantAccessException("Access denied to this transaction");
       }
 
       return mapToResponse(existingTransaction);
@@ -75,7 +76,7 @@ public class PaymentService {
                         "Cross-tenant access attempt: tenant {} tried to access payment {}",
                         tenantId,
                         paymentId);
-                    return new ForbiddenException("Access denied to this transaction");
+                    return new CrossTenantAccessException("Access denied to this transaction");
                   }
                   return new ResourceNotFoundException("Payment transaction not found");
                 });
